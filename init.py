@@ -12,11 +12,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "Hello, World..."
+    return "Trilby tanks, Wecome..."
 
 @app.route('/pumpStateRead')
 def pumpStateRead():
     myPumpStatus = PumpStatus()
+    
     myPumpStatus.getStatus()
     
     returnString = {'hosestate': str(myPumpStatus.hosestate),  'irrigationstate': str(myPumpStatus.irrigationstate), 'pumpstate': str(myPumpStatus.pumpstate), 'eventname': myPumpStatus.eventname}
@@ -26,6 +27,7 @@ def pumpStateRead():
 @app.route('/pumpStateWrite')
 def pumpStateWrite():
     myPumpStatus = PumpStatus()
+    
     myPumpStatus.setStatus(1,  1,  1,  'Remote state update!')
     
     returnString = {'pumpStateWrite': 'Pump state updated'}
@@ -35,6 +37,7 @@ def pumpStateWrite():
 @app.route('/ledStateRead')
 def ledStateRead():
     myLedControl = ledcontrol()
+    
     myLedControl.getStatus()
     
     return 'Code to be completed'
@@ -42,8 +45,8 @@ def ledStateRead():
 @app.route('/ledStateWrite/<float:led>/<float:ledGreen>/<float:ledRed>')
 def ledStateWrite(led,  ledGreen, ledRed):
     myLedControl = ledcontrol()
-    myLedControl.getStatus()
     
+    myLedControl.getStatus()
     myLedControl.setWeatherGreen(ledGreen)
     myLedControl.setWeatherRed(ledRed)
     
@@ -55,6 +58,7 @@ def ledStateWrite(led,  ledGreen, ledRed):
 @app.route('/sensorStateWrite/<string:sensorId>/<string:sensorType>/<int:sensorValue>')
 def sensorStateWrite(sensorId,  sensorType, sensorValue):
     mySensorState = sensorState()
+    
     mySensorState.setSensorID(sensorId)
     mySensorState.setSensorType(sensorType)
     mySensorState.setSensorValue(sensorValue)
@@ -67,6 +71,7 @@ def sensorStateWrite(sensorId,  sensorType, sensorValue):
 @app.route('/levelStateWrite/<string:sensorId>/<string:sensorType>/<int:sensorValue>')
 def levelStateWrite(sensorId,  sensorType, sensorValue):
     mySensorState = sensorState()
+    
     mySensorState.setSensorID(sensorId)
     mySensorState.setSensorType(sensorType)
     mySensorState.setSensorValue(sensorValue)
@@ -83,6 +88,17 @@ def getWeatherGraph():
     returnString = myWeather.getWeatherGraph()
 
     return json .dumps(returnString)
+
+@app.route('/getControlStates/')
+def getControlStates():
+    myControl = control()
+    
+    returnString = myControl.isWet()
+    
+    returnString = {'isWet':  myControl.isWet(),  'isLevel': myControl.isLevel(),  'isHose': myControl.isHose(),  'isSunrise': myControl .isSunrise(),  'isSunset': myControl .isSunset()}
+    
+    return json .dumps(returnString)
+
 
 @app.route('/isWet/')
 def isWet():
