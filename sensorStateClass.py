@@ -37,24 +37,19 @@ class sensorState:
             self.sensorType = row[1]
             self.sensorvalue = row[2]
     
-    def setSatus(self):        
-        #sql = "select * from sensorStates where sensorid = '{0}'".replace('{0}',  self.sensorId)
-        #self.dbCur.execute(sql)
-        #rows = self.dbCur.fetchall()
-        
-        #if len(rows) > 0:
-            #for row in rows:
-                #sql = "update sensorStates set sensorvalue = {0} where sensorid = '{1}'"
-                #sql = sql.replace('{0}',  str(self.sensorvalue))
-                #sql = sql.replace('{1}',  self.sensorId)
-                
-                #self.dbCur.execute(sql)
-                
-        #else:
+    def setSatus(self):
         sql = "insert into sensorStates (sensorid, sensortype, sensorvalue, enabled) values( '{0}', '{1}', {2}, 1 )"
         sql = sql.replace('{0}',  self.sensorId)
         sql = sql.replace('{1}',  self.sensorType)
         sql = sql.replace('{2}',  str(self.sensorvalue))
+        
+        print(sql)
+        
+        self.dbCur.execute(sql)
+
+    def setHeartbeat(self):
+        sql = "insert into sensorHeartbeats (sensorid) values('{0}')"
+        sql = sql.replace('{0}',  self.sensorId)
         
         print(sql)
         
