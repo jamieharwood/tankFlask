@@ -5,14 +5,16 @@ from ledcontrolClass import ledcontrol
 from sensorStateClass import sensorState
 from weatherClass import weather
 from controlClass import control
+from sunrisesetClass import sunRiseSet
 import json
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "Trilby tanks, Wecome..."
+    return render_template('base.html', my_string="Wheeeee!", my_list=[0,1,2,3,4,5])
+
 
 @app.route('/pumpStateRead')
 def pumpStateRead():
@@ -63,6 +65,17 @@ def sensorStateWrite(sensorId,  sensorType, sensorValue):
     mySensorState.setSensorType(sensorType)
     mySensorState.setSensorValue(sensorValue)
     mySensorState.setSatus()
+
+    returnString = {'state':  str(200)}
+
+    return json .dumps(returnString)
+
+@app.route('/sensorHeartbeat/<string:sensorId>')
+def sensorHeartbeat(sensorId):
+    mySensorState = sensorState()
+    
+    mySensorState.setSensorID(sensorId)
+    mySensorState.setHeartbeat()
 
     returnString = {'state':  str(200)}
 
@@ -140,6 +153,26 @@ def isSunset():
 
     return json.dumps(returnString)
 
+@app.route('/sunriseTime/')
+def sunriseTime():
+    mySunRiseSet = sunRiseSet()
+    
+    mySunRiseSet.getSunriseset()
+    
+    returnString = str(mySunRiseSet.sunrise)
+    
+    return json.dumps(returnString)
+
+
+@app.route('/sunsetTime/')
+def sunsetTime():
+    mySunRiseSet = sunRiseSet()
+    
+    mySunRiseSet .getSunriseset()
+    
+    returnString = str(mySunRiseSet.sunset)
+        
+    return json.dumps(returnString)
 
 if __name__ == '__main__':
 	app.run(debug=True)
