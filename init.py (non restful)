@@ -1,0 +1,223 @@
+#!/usr/bin/env python3
+
+from pumpStatusClass import PumpStatus
+from ledcontrolClass import ledcontrol
+from sensorStateClass import sensorState
+from weatherClass import weather
+from controlClass import control
+from sunrisesetClass import sunRiseSet
+import json
+from flask import Flask, render_template
+#from flask_restful import Resource,  Api
+
+app = Flask(__name__)
+#api = Api(app)
+
+@app.route('/')
+def index():
+    return render_template('base.html', my_string="Wheeeee!", my_list=[0,1,2,3,4,5])
+
+
+@app.route('/pumpStateRead')
+def pumpStateRead():
+    myPumpStatus = PumpStatus()
+    
+    myPumpStatus.getStatus()
+    
+    returnString = {'hosestate': str(myPumpStatus.hosestate),  'irrigationstate': str(myPumpStatus.irrigationstate), 'pumpstate': str(myPumpStatus.pumpstate), 'eventname': myPumpStatus.eventname}
+    
+    return json .dumps(returnString)
+
+@app.route('/pumpStateWrite')
+def pumpStateWrite():
+    myPumpStatus = PumpStatus()
+    
+    myPumpStatus.setStatus(1,  1,  1,  'Remote state update!')
+    
+    returnString = {'pumpStateWrite': 'Pump state updated'}
+    
+    return json .dumps(returnString)
+
+@app.route('/ledStateRead')
+def ledStateRead():
+    myLedControl = ledcontrol()
+    
+    myLedControl.getStatus()
+    
+    return 'Code to be completed'
+
+@app.route('/ledStateWrite/<float:led>/<float:ledGreen>/<float:ledRed>')
+def ledStateWrite(led,  ledGreen, ledRed):
+    myLedControl = ledcontrol()
+    
+    myLedControl.getStatus()
+    myLedControl.setWeatherGreen(ledGreen)
+    myLedControl.setWeatherRed(ledRed)
+    
+    returnString = {'ledStateGreen':  str(ledGreen),  'ledStateRed': str(ledRed)}
+    
+    
+    return json.dumps(returnString)
+
+@app.route('/sensorStateWrite/<string:sensorId>/<string:sensorType>/<int:sensorValue>')
+def sensorStateWrite(sensorId,  sensorType, sensorValue):
+    mySensorState = sensorState()
+    
+    mySensorState.setSensorID(sensorId)
+    mySensorState.setSensorType(sensorType)
+    mySensorState.setSensorValue(sensorValue)
+    mySensorState.setSatus()
+
+    returnString = {'state':  str(200)}
+
+    return json .dumps(returnString)
+
+@app.route('/sensorRegistration/<string:sensorId>/<string:sensorType>/<string:sensorMedium>/<string:provider>')
+def sensorRegistration(sensorId,  sensorType, sensorMedium,  provider):
+    mySensorState = sensorState()
+    
+    mySensorState.setSensorID(sensorId)
+    mySensorState.setSensorType(sensorType)
+    mySensorState.setSensorMedium(sensorMedium)
+    mySensorState.setSensorProvider(provider)
+    mySensorState.registration()
+
+    returnString = {'state':  str(200)}
+
+    return json .dumps(returnString)
+
+@app.route('/sensorHeartbeat/<string:sensorId>')
+def sensorHeartbeat(sensorId):
+    mySensorState = sensorState()
+    
+    mySensorState.setSensorID(sensorId)
+    # mySensorState.setSensorIP(sensorIp)
+    mySensorState.setHeartbeat()
+
+    returnString = {'state':  str(200)}
+
+    return json .dumps(returnString)
+
+@app.route('/sensorHeartbeatIP/<string:sensorId>/<string:sensorIp>')
+def sensorHeartbeatIP(sensorId, sensorIp):
+    mySensorState = sensorState()
+    
+    mySensorState.setSensorID(sensorId)
+    mySensorState.setSensorIP(sensorIp)
+    mySensorState.setHeartbeat()
+
+    returnString = {'state':  str(200)}
+
+    return json .dumps(returnString)
+
+@app.route('/levelStateWrite/<string:sensorId>/<string:sensorType>/<int:sensorValue>')
+def levelStateWrite(sensorId,  sensorType, sensorValue):
+    mySensorState = sensorState()
+    
+    mySensorState.setSensorID(sensorId)
+    mySensorState.setSensorType(sensorType)
+    mySensorState.setSensorValue(sensorValue)
+    mySensorState.setSatus()
+
+    returnString = {'state':  str(200)}
+
+    return json.dumps(returnString)
+
+@app.route('/getWeatherGraph/')
+def getWeatherGraph():
+    myWeather = weather()
+    
+    returnString = myWeather.getWeatherGraph()
+
+    return json .dumps(returnString)
+
+@app.route('/getControlStates/')
+def getControlStates():
+    myControl = control()
+    
+    returnString = myControl.isWet()
+    
+    returnString = {'isWet':  myControl.isWet(),  'isLevel': myControl.isLevel(),  'isHose': myControl.isHose(),  'isSunrise': myControl .isSunrise(),  'isSunset': myControl .isSunset()}
+    
+    return json .dumps(returnString)
+
+
+@app.route('/isWet/')
+def isWet():
+    myControl = control()
+    
+    returnString = myControl.isWet()
+
+    return json.dumps(returnString)
+
+@app.route('/isLevel/')
+def isLevel():
+    myControl = control()
+    
+    returnString = myControl.isLevel()
+
+    return json.dumps(returnString)
+
+@app.route('/isHose/')
+def isHose():
+    myControl = control()
+    
+    returnString = myControl.isHose()
+
+    return json.dumps(returnString)
+    
+@app.route('/isSunrise/')
+def isSunrise():
+    myControl = control()
+    
+    returnString = myControl .isSunrise()
+
+    return json.dumps(returnString)
+
+@app.route('/isSunset/')
+def isSunset():
+    myControl = control()
+    
+    returnString = myControl .isSunset()
+
+    return json.dumps(returnString)
+
+@app.route('/sunriseTime/')
+def sunriseTime():
+    mySunRiseSet = sunRiseSet()
+    
+    mySunRiseSet.getSunriseset()
+    
+    returnString = str(mySunRiseSet.sunrise)
+    
+    return json.dumps(returnString)
+
+
+@app.route('/sunsetTime/')
+def sunsetTime():
+    mySunRiseSet = sunRiseSet()
+    
+    mySunRiseSet .getSunriseset()
+    
+    returnString = str(mySunRiseSet.sunset)
+        
+    return json.dumps(returnString)
+
+"""
+class SunsetTime(Resource):
+    def get(self):
+        mySunRiseSet = sunRiseSet()
+    
+        mySunRiseSet .getSunriseset()
+    
+        returnString = str(mySunRiseSet.sunset)
+        
+        return json.dumps(returnString)
+
+
+api.add_resource(SunsetTime,  '/sunsetTime/')
+"""
+
+if __name__ == '__main__':
+	app.run(debug=True)
+
